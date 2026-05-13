@@ -5,30 +5,34 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use uuid::Uuid;
 
 use crate::db::models::{CreateProject, Project};
+use crate::error::AppError;
 
 pub async fn create_project(
     State(pool): State<SqlitePool>,
     Json(payload): Json<CreateProject>,
-) -> Json<Value> {
+) -> Result<Json<Value>, AppError> {
     let id = Uuid::new_v4();
     let created_at = SystemTime::now()
         .duration_since(UNIX_EPOCH)
-        .unwrap()
+        .map_err(|_| AppError::Internal("system time error".to_string()))?
         .as_secs() as i64;
 
-    sqlx::query("INSERT INTO projects (id, name, created_at) VALUES (?, ?, ?)")
-        .bind(id.to_string())
-        .bind(&payload.name)
-        .bind(created_at)
-        .execute(&pool)
-        .await
-        .unwrap();
+    let name = payload.name;
+    let id_str = id.to_string();
+    sqlx::query!(
+        "INSERT INTO projects (id, name, created_at) VALUES (?, ?, ?)",
+        id_str,
+        name,
+        created_at,
+    )
+    .execute(&pool)
+    .await?;
 
     let project = Project {
         id,
-        name: payload.name,
+        name,
         created_at,
     };
 
-    Json(json!(project))
+    Ok(Json(json!(project)))
 }

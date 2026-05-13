@@ -2,3 +2,4 @@
 mimic.db
 /server/target
 /server/mimic.db
+/server/.env

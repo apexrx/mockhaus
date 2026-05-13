@@ -6,6 +6,7 @@ mod api;
 mod db;
 mod logger;
 mod router;
+mod error;
 
 #[derive(Clone)]
 pub struct AppState {
