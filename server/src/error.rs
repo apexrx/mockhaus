@@ -1,12 +1,13 @@
 use axum::{
+    Json,
     http::StatusCode,
     response::{IntoResponse, Response},
-    Json,
 };
 use serde_json::json;
 
 pub enum AppError {
     Database(sqlx::Error),
+    NotFound,
     Internal(String),
 }
 
@@ -22,10 +23,7 @@ impl IntoResponse for AppError {
             }
             AppError::Internal(msg) => {
                 eprintln!("Internal error: {}", msg);
-                (
-                    StatusCode::INTERNAL_SERVER_ERROR,
-                    msg,
-                )
+                (StatusCode::INTERNAL_SERVER_ERROR, msg)
             }
         };
 
