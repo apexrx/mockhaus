@@ -7,7 +7,6 @@ use serde_json::json;
 
 pub enum AppError {
     Database(sqlx::Error),
-    NotFound,
     Internal(String),
 }
 
