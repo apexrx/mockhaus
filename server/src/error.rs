@@ -7,6 +7,7 @@ use serde_json::json;
 
 pub enum AppError {
     Database(sqlx::Error),
+    NotFound(String),
     Internal(String),
 }
 
@@ -15,13 +16,22 @@ impl IntoResponse for AppError {
         let (status, error_message) = match self {
             AppError::Database(err) => {
                 eprintln!("Database error: {:?}", err);
+
                 (
                     StatusCode::INTERNAL_SERVER_ERROR,
                     "Internal server error".to_string(),
                 )
             }
+
+            AppError::NotFound(msg) => {
+                eprintln!("Not found: {}", msg);
+
+                (StatusCode::NOT_FOUND, msg)
+            }
+
             AppError::Internal(msg) => {
                 eprintln!("Internal error: {}", msg);
+
                 (StatusCode::INTERNAL_SERVER_ERROR, msg)
             }
         };
@@ -36,6 +46,10 @@ impl IntoResponse for AppError {
 
 impl From<sqlx::Error> for AppError {
     fn from(inner: sqlx::Error) -> Self {
-        AppError::Database(inner)
+        match inner {
+            sqlx::Error::RowNotFound => AppError::NotFound("Project not found".to_string()),
+
+            _ => AppError::Database(inner),
+        }
     }
 }
