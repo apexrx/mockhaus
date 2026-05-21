@@ -1,4 +1,4 @@
-use axum::{Router, extract::FromRef, routing::get, routing::post};
+use axum::{Router, extract::FromRef, routing::get, routing::post, routing::put};
 use sqlx::sqlite::{SqliteConnectOptions, SqlitePool};
 use std::net::SocketAddr;
 
@@ -38,6 +38,15 @@ async fn main() -> anyhow::Result<()> {
         .route(
             "/admin/projects/:id",
             get(api::projects::get_project).delete(api::projects::delete_project),
+        )
+        .route(
+            "/admin/projects/:id/endpoints",
+            post(api::endpoints::add_endpoint),
+        )
+        .route(
+            "/admin/projects/:id/endpoints/:eid",
+            put(api::endpoints::update_endpoint)
+                .delete(api::endpoints::delete_endpoint),
         )
         .with_state(state);
 
