@@ -1,4 +1,8 @@
-use axum::{Router, extract::FromRef, routing::get, routing::post, routing::put};
+use axum::{
+    Router,
+    extract::FromRef,
+    routing::{any, get, post, put},
+};
 use sqlx::sqlite::{SqliteConnectOptions, SqlitePool};
 use std::net::SocketAddr;
 
@@ -36,18 +40,18 @@ async fn main() -> anyhow::Result<()> {
             post(api::projects::create_project).get(api::projects::list_projects),
         )
         .route(
-            "/admin/projects/:id",
+            "/admin/projects/{id}",
             get(api::projects::get_project).delete(api::projects::delete_project),
         )
         .route(
-            "/admin/projects/:id/endpoints",
+            "/admin/projects/{id}/endpoints",
             post(api::endpoints::add_endpoint),
         )
         .route(
-            "/admin/projects/:id/endpoints/:eid",
-            put(api::endpoints::update_endpoint)
-                .delete(api::endpoints::delete_endpoint),
+            "/admin/projects/{id}/endpoints/{eid}",
+            put(api::endpoints::update_endpoint).delete(api::endpoints::delete_endpoint),
         )
+        .route("/{project_id}/{*path}", any(router::handle_mock_request))
         .with_state(state);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 7070));
