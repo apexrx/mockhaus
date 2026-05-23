@@ -1,7 +1,7 @@
 use axum::{
     Router,
     extract::FromRef,
-    routing::{any, get, post, put},
+    routing::{get, post, put},
 };
 use sqlx::sqlite::{SqliteConnectOptions, SqlitePool};
 use std::net::SocketAddr;
@@ -28,7 +28,9 @@ async fn main() -> anyhow::Result<()> {
     let opts = SqliteConnectOptions::new()
         .filename("mimic.db")
         .create_if_missing(true);
+
     let pool = SqlitePool::connect_with(opts).await?;
+
     sqlx::migrate!("./migrations").run(&pool).await?;
 
     let state = AppState { db: pool };
@@ -51,12 +53,16 @@ async fn main() -> anyhow::Result<()> {
             "/admin/projects/{id}/endpoints/{eid}",
             put(api::endpoints::update_endpoint).delete(api::endpoints::delete_endpoint),
         )
-        .route("/{project_id}/{*path}", any(router::handle_mock_request))
+        .merge(router::routes::router(state.clone()))
         .with_state(state);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 7070));
+
     println!("listening on {addr}");
+
     let listener = tokio::net::TcpListener::bind(addr).await?;
+
     axum::serve(listener, app).await?;
+
     Ok(())
 }
