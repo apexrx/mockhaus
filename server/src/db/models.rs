@@ -38,3 +38,15 @@ pub struct UpdateEndpoint {
     pub status_code: Option<i64>,
     pub response_body: Option<String>,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize, sqlx::FromRow)]
+pub struct RequestLog {
+    pub id: Option<String>,
+    pub project_id: String,
+    pub endpoint_id: Option<String>,
+    pub method: String,
+    pub path: String,
+    pub headers: String,
+    pub body: Option<String>,
+    pub received_at: i64,
+}

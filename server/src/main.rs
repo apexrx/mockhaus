@@ -53,6 +53,10 @@ async fn main() -> anyhow::Result<()> {
             "/admin/projects/{id}/endpoints/{eid}",
             put(api::endpoints::update_endpoint).delete(api::endpoints::delete_endpoint),
         )
+        .route(
+            "/admin/projects/{id}/logs",
+            get(api::logs::get_logs).delete(api::logs::delete_log),
+        )
         .merge(router::routes::router(state.clone()))
         .with_state(state);
 

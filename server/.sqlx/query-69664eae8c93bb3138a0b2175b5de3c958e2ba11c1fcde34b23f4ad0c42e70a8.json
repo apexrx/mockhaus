@@ -1,0 +1,56 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        SELECT\n            id             as \"id!\",\n            project_id     as \"project_id!\",\n            method         as \"method!\",\n            path           as \"path!\",\n            status_code    as \"status_code!\",\n            response_body  as \"response_body!\",\n            created_at     as \"created_at!\"\n        FROM endpoints\n        WHERE project_id = ? AND method = ?\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "id!",
+        "ordinal": 0,
+        "type_info": "Text"
+      },
+      {
+        "name": "project_id!",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "method!",
+        "ordinal": 2,
+        "type_info": "Text"
+      },
+      {
+        "name": "path!",
+        "ordinal": 3,
+        "type_info": "Text"
+      },
+      {
+        "name": "status_code!",
+        "ordinal": 4,
+        "type_info": "Integer"
+      },
+      {
+        "name": "response_body!",
+        "ordinal": 5,
+        "type_info": "Text"
+      },
+      {
+        "name": "created_at!",
+        "ordinal": 6,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": [
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "69664eae8c93bb3138a0b2175b5de3c958e2ba11c1fcde34b23f4ad0c42e70a8"
+}

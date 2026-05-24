@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "\n        INSERT INTO request_logs (id, project_id, method, path, headers, body, received_at)\n        VALUES (?, ?, ?, ?, ?, ?, ?)\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 7
+    },
+    "nullable": []
+  },
+  "hash": "debda2674d3545ef0d4f9d9a3bf9da7aa3828d9ffa2978b162d3b87343bd7f34"
+}

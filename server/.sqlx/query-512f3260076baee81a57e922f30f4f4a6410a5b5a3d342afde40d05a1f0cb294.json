@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "INSERT INTO endpoints (id, project_id, method, path, status_code, response_body, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 7
+    },
+    "nullable": []
+  },
+  "hash": "512f3260076baee81a57e922f30f4f4a6410a5b5a3d342afde40d05a1f0cb294"
+}

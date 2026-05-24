@@ -45,7 +45,7 @@ pub async fn log_request(State(pool): State<SqlitePool>, req: Request, next: Nex
         &method_str,
         &path,
         &headers_json,
-        &body_string,
+        Some(body_string.as_str()),
     )
     .await
     {

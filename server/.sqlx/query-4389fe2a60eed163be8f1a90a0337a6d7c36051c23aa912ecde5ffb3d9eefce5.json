@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "UPDATE endpoints\n         SET method = ?, path = ?, status_code = ?, response_body = ?\n         WHERE id = ? AND project_id = ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 6
+    },
+    "nullable": []
+  },
+  "hash": "4389fe2a60eed163be8f1a90a0337a6d7c36051c23aa912ecde5ffb3d9eefce5"
+}

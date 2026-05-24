@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "DELETE FROM endpoints WHERE id = ? AND project_id = ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "dbcb2823dc3664ebd0ad0bf3527afefa02537bfdb13e60d97519db20ad61a207"
+}
