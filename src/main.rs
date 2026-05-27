@@ -1,3 +1,4 @@
+use askama::Template;
 use axum::{
     Router,
     extract::FromRef,
@@ -5,6 +6,10 @@ use axum::{
 };
 use sqlx::sqlite::{SqliteConnectOptions, SqlitePool};
 use std::net::SocketAddr;
+use tower_http::{
+    cors::{Any, CorsLayer},
+    services::ServeDir,
+};
 
 mod api;
 mod db;
@@ -23,6 +28,10 @@ impl FromRef<AppState> for SqlitePool {
     }
 }
 
+#[derive(Template)]
+#[template(path = "projects.html")]
+struct ProjectsTemplate;
+
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let opts = SqliteConnectOptions::new()
@@ -34,6 +43,11 @@ async fn main() -> anyhow::Result<()> {
     sqlx::migrate!("./migrations").run(&pool).await?;
 
     let state = AppState { db: pool };
+
+    let cors = CorsLayer::new()
+        .allow_origin(Any)
+        .allow_methods(Any)
+        .allow_headers(Any);
 
     let app = Router::new()
         .route("/health", get(|| async { "ok" }))
@@ -57,7 +71,18 @@ async fn main() -> anyhow::Result<()> {
             "/admin/projects/{id}/logs",
             get(api::logs::get_logs).delete(api::logs::delete_log),
         )
-        .merge(router::routes::router(state.clone()))
+        .route(
+            "/",
+            get(|| async {
+                let html = ProjectsTemplate
+                    .render()
+                    .map_err(|e| crate::error::AppError::Internal(e.to_string()))?;
+                Ok::<_, crate::error::AppError>(axum::response::Html(html))
+            }),
+        )
+        .nest_service("/static", ServeDir::new("static"))
+        .nest("/mock", router::routes::router(state.clone()))
+        .layer(cors)
         .with_state(state);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 7070));
