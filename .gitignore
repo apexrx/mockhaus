@@ -1,5 +1,4 @@
 /target
 mimic.db
-/server/target
-/server/mimic.db
-/server/.env
+.env
+/.sqlx
