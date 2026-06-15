@@ -1,5 +1,6 @@
 use axum::extract::{Path, State};
 use axum::{Json, http::StatusCode, response::IntoResponse};
+use serde_json::{Value, json};
 use sqlx::SqlitePool;
 use std::time::{SystemTime, UNIX_EPOCH};
 use uuid::Uuid;
@@ -7,6 +8,14 @@ use uuid::Uuid;
 use crate::db::endpoint;
 use crate::db::models::{CreateEndpoint, Endpoint, UpdateEndpoint};
 use crate::error::AppError;
+
+pub async fn list_endpoints(
+    State(pool): State<SqlitePool>,
+    Path(id): Path<String>,
+) -> Result<Json<Value>, AppError> {
+    let endpoints = endpoint::list_by_project(&pool, &id).await?;
+    Ok(Json(json!(endpoints)))
+}
 
 pub async fn add_endpoint(
     State(pool): State<SqlitePool>,
@@ -34,7 +43,7 @@ pub async fn update_endpoint(
     State(pool): State<SqlitePool>,
     Path((id, eid)): Path<(String, String)>,
     Json(payload): Json<UpdateEndpoint>,
-) -> Result<impl IntoResponse, AppError> {
+) -> Result<Json<Value>, AppError> {
     let mut epi = endpoint::get(&pool, &eid, &id).await?;
 
     if let Some(method) = payload.method {
@@ -51,7 +60,7 @@ pub async fn update_endpoint(
     }
 
     endpoint::update(&pool, &eid, &id, &epi).await?;
-    Ok(StatusCode::OK)
+    Ok(Json(json!(epi)))
 }
 
 pub async fn delete_endpoint(

@@ -1,0 +1,14 @@
+services:
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    ports:
+      - "7070:7070"
+    volumes:
+      - mockhaus-data:/data
+    environment:
+      - DATABASE_URL=sqlite:///data/mockhaus.db
+    restart: unless-stopped
+volumes:
+  mockhaus-data:

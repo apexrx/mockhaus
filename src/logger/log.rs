@@ -11,7 +11,7 @@ pub async fn log_request(State(pool): State<SqlitePool>, req: Request, next: Nex
     let method = req.method().clone();
     let path = req.uri().path().to_string();
 
-    let project_id = path.split('/').nth(2).unwrap_or("").to_string();
+    let project_id = path.split('/').nth(1).unwrap_or("").to_string();
 
     let mut header_map = HashMap::new();
 

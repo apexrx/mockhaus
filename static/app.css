@@ -1,6 +1,297 @@
 body {
     background-color: #0a0a0a;
-    color: #ffb000; /* Amber */
-    font-family: monospace; /* We'll swap to Berkeley Mono later */
+    color: #ffb000;
+    font-family: monospace;
     padding: 2rem;
+}
+
+#editor-layout {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+#endpoint-list {
+    flex: 0 0 300px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#endpoint-list li {
+    padding: 0.5rem;
+    cursor: pointer;
+    border-bottom: 1px solid #333;
+}
+
+#endpoint-list li:hover {
+    background: #1a1a1a;
+}
+
+#endpoint-list li.active {
+    background: #2a2a2a;
+    color: #ffb000;
+    font-weight: bold;
+}
+
+#endpoint-list .method {
+    display: inline-block;
+    width: 4rem;
+    font-weight: bold;
+}
+
+#endpoint-form {
+    flex: 1;
+}
+
+#endpoint-form label {
+    display: block;
+    margin-bottom: 0.75rem;
+}
+
+#endpoint-form input,
+#endpoint-form select,
+#endpoint-form textarea {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    padding: 0.4rem;
+    background: #1a1a1a;
+    color: #ffb000;
+    border: 1px solid #333;
+    font-family: monospace;
+    box-sizing: border-box;
+}
+
+#endpoint-form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+#endpoint-form button {
+    padding: 0.5rem 1.5rem;
+    background: #ffb000;
+    color: #0a0a0a;
+    border: none;
+    font-family: monospace;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#endpoint-form button:hover {
+    background: #ffc040;
+}
+
+#log-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+#log-table th,
+#log-table td {
+    text-align: left;
+    padding: 0.4rem 0.75rem;
+    border-bottom: 1px solid #333;
+}
+
+#log-table th {
+    color: #cc8800;
+    font-weight: bold;
+}
+
+#log-table td:first-child {
+    font-weight: bold;
+    width: 5rem;
+}
+
+#inspector-status {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.muted {
+    color: #666;
+}
+
+.toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    padding: 1rem 2rem;
+    background: #1a1a1a;
+    color: #ffb000;
+    border: 1px solid #333;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s ease-out;
+    z-index: 9999;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.toast.active {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.toast-error {
+    border-color: #800000;
+    color: #ff6b6b;
+}
+
+.toast-success {
+    border-color: #ffb000;
+}
+
+.copy-btn {
+    margin-left: 0.5rem;
+    padding: 1px 6px;
+    background: #2a2a2a;
+    color: #ffb000;
+    border: 1px solid #444;
+    font-family: monospace;
+    font-size: 0.7rem;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.copy-btn:hover {
+    background: #3a3a3a;
+    border-color: #ffb000;
+}
+
+.btn {
+    padding: 0.5rem 1.5rem;
+    background: #ffb000;
+    color: #0a0a0a;
+    border: none;
+    font-family: monospace;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn:hover {
+    background: #ffc040;
+}
+
+.project-card {
+    border: 1px solid #333;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: #1a1a1a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.project-card h3 {
+    margin: 0 0 0.5rem 0;
+    color: #ffb000;
+}
+
+.project-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.project-actions a {
+    color: #cc8800;
+    text-decoration: none;
+}
+
+.project-actions a:hover {
+    text-decoration: underline;
+    color: #ffb000;
+}
+
+.nav-brand {
+    color: #ffb000;
+    text-decoration: none;
+}
+
+.nav-brand:hover {
+    color: #ffc040;
+    text-decoration: underline;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.modal {
+    background: #1a1a1a;
+    border: 1px solid #ffb000;
+    padding: 2rem;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+}
+
+.modal h3 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: #ffb000;
+}
+
+.modal input {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    padding: 0.75rem;
+    background: #0a0a0a;
+    color: #ffb000;
+    border: 1px solid #444;
+    font-family: monospace;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.modal input:focus {
+    outline: none;
+    border-color: #ffb000;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.project-header {
+    margin-bottom: 2rem;
+}
+.project-name {
+    color: #fff;
+font-weight: normal;
+}
+.project-tabs {
+    display: flex;
+gap: 1.5rem;
+    border-bottom: 1px solid #333;
+padding-bottom: 0.5rem;
+    margin-top: 1rem;
+}
+.project-tabs .tab {
+    color: #cc8800;
+text-decoration: none;
+    font-size: 1.1rem;
+padding: 0.25rem 0.5rem;
+}
+.project-tabs .tab.active {
+    color: #ffb000;
+font-weight: bold;
+    border-bottom: 2px solid #ffb000;
+}
+.project-tabs .tab:hover:not(.active) {
+    color: #ffb000;
+background: #1a1a1a;
 }

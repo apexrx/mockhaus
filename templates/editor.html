@@ -1,0 +1,26 @@
+{% extends "base.html" %} {% block scripts %}
+<script type="importmap">
+    {
+        "imports": {
+            "morphdom": "https://esm.sh/morphdom"
+        }
+    }
+</script>
+
+<script type="module" src="/static/js/views/editor.js"></script>
+{% endblock %} {% block content %}
+<div class="project-header">
+<h1><a href="/" class="nav-brand">Mockhaus</a> // <span id="project-name-display" class="project-name">Loading...</span></h1>
+<nav class="project-tabs">
+<a href="/projects/{{ project_id }}/editor" class="tab active">Editor</a>
+<a href="/projects/{{ project_id }}/inspector" class="tab">Logs</a>
+</nav>
+</div>
+<div id="editor-layout" data-project-id="{{ project_id }}">
+    <div style="flex: 0 0 300px;">
+        <button id="new-endpoint-btn" class="btn" style="width: 100%; margin-bottom: 1rem; box-sizing: border-box;">+ New Endpoint</button>
+        <div id="endpoint-list"></div>
+    </div>
+    <form id="endpoint-form"></form>
+</div>
+{% endblock %}

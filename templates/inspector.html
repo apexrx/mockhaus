@@ -1,0 +1,32 @@
+{% extends "base.html" %} {% block scripts %}
+<script type="importmap">
+    {
+        "imports": {
+            "morphdom": "https://esm.sh/morphdom"
+        }
+    }
+</script>
+
+<script type="module" src="/static/js/views/inspector.js"></script>
+{% endblock %} {% block content %}
+<div class="project-header">
+<h1><a href="/" class="nav-brand">Mockhaus</a> // <span id="project-name-display" class="project-name">Loading...</span></h1>
+<nav class="project-tabs">
+<a href="/projects/{{ project_id }}/editor" class="tab">Editor</a>
+<a href="/projects/{{ project_id }}/inspector" class="tab active">Logs</a>
+</nav>
+</div>
+<div id="inspector" data-project-id="{{ project_id }}">
+    <table id="log-table">
+        <thead>
+            <tr>
+                <th>Method</th>
+                <th>Path</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody id="log-body"></tbody>
+    </table>
+    <div id="inspector-status">Polling...</div>
+</div>
+{% endblock %}

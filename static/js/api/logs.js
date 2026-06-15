@@ -3,22 +3,19 @@ const BASE = "/admin";
 async function request(method, path, body) {
   const res = await fetch(`${BASE}${path}`, {
     method,
-    headers: body ? { "Content-Type": "application/json" } : {},
+    headers: body ? { 'Content-Type': 'application/json' } : {},
     body: body ? JSON.stringify(body) : undefined,
   });
-
   if (!res.ok) {
-    // If the Rust server returns our AppError, it comes back as { "error": "..." }
-    const errData = await res.json().catch(() => ({}));
-    throw new Error(
-      errData.error || `${method} ${path} failed with ${res.status}`,
-    );
+    let errData = {};
+    try { errData = await res.json(); } catch (e) {}
+    throw new Error(errData.error || `${method} ${path} failed with ${res.status}`);
   }
-
-  // 204 No Content has no body, so we can't parse JSON
-  if (res.status === 204) return null;
-
-  return res.json();
+  // Explicitly ignore responses that we know don't have bodies
+  if (res.status === 204 || res.status === 201) return null;
+  const text = await res.text();
+  if (!text || text.trim() === "") return null;
+  return JSON.parse(text);
 }
 
 export async function getLogs(projectId, limit) {

@@ -66,6 +66,31 @@ pub async fn update(
     Ok(())
 }
 
+pub async fn list_by_project(
+    pool: &SqlitePool,
+    project_id: &str,
+) -> Result<Vec<Endpoint>, sqlx::Error> {
+    sqlx::query_as!(
+        Endpoint,
+        r#"
+        SELECT
+            id             as "id!",
+            project_id     as "project_id!",
+            method         as "method!",
+            path           as "path!",
+            status_code    as "status_code!",
+            response_body  as "response_body!",
+            created_at     as "created_at!"
+        FROM endpoints
+        WHERE project_id = ?
+        ORDER BY created_at ASC
+        "#,
+        project_id
+    )
+    .fetch_all(pool)
+    .await
+}
+
 pub async fn find_by_project_and_method(
     pool: &SqlitePool,
     project_id: &str,

@@ -1,11 +1,12 @@
 use askama::Template;
 use axum::{
     Router,
-    extract::FromRef,
+    extract::{FromRef, Path},
     routing::{get, post, put},
 };
 use sqlx::sqlite::{SqliteConnectOptions, SqlitePool};
 use std::net::SocketAddr;
+use std::str::FromStr;
 use tower_http::{
     cors::{Any, CorsLayer},
     services::ServeDir,
@@ -32,10 +33,23 @@ impl FromRef<AppState> for SqlitePool {
 #[template(path = "projects.html")]
 struct ProjectsTemplate;
 
+#[derive(Template)]
+#[template(path = "editor.html")]
+struct EditorTemplate {
+    project_id: String,
+}
+
+#[derive(Template)]
+#[template(path = "inspector.html")]
+struct InspectorTemplate {
+    project_id: String,
+}
+
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let opts = SqliteConnectOptions::new()
-        .filename("mimic.db")
+    let database_url = std::env::var("DATABASE_URL")
+        .unwrap_or_else(|_| "sqlite:mimic.db".into());
+    let opts = SqliteConnectOptions::from_str(&database_url)?
         .create_if_missing(true);
 
     let pool = SqlitePool::connect_with(opts).await?;
@@ -61,7 +75,7 @@ async fn main() -> anyhow::Result<()> {
         )
         .route(
             "/admin/projects/{id}/endpoints",
-            post(api::endpoints::add_endpoint),
+            post(api::endpoints::add_endpoint).get(api::endpoints::list_endpoints),
         )
         .route(
             "/admin/projects/{id}/endpoints/{eid}",
@@ -80,12 +94,30 @@ async fn main() -> anyhow::Result<()> {
                 Ok::<_, crate::error::AppError>(axum::response::Html(html))
             }),
         )
+        .route(
+            "/projects/{id}/editor",
+            get(|Path(id): Path<String>| async move {
+                let html = EditorTemplate { project_id: id.clone() }
+                    .render()
+                    .map_err(|e| crate::error::AppError::Internal(e.to_string()))?;
+                Ok::<_, crate::error::AppError>(axum::response::Html(html))
+            }),
+        )
+        .route(
+            "/projects/{id}/inspector",
+            get(|Path(id): Path<String>| async move {
+                let html = InspectorTemplate { project_id: id.clone() }
+                    .render()
+                    .map_err(|e| crate::error::AppError::Internal(e.to_string()))?;
+                Ok::<_, crate::error::AppError>(axum::response::Html(html))
+            }),
+        )
         .nest_service("/static", ServeDir::new("static"))
         .nest("/mock", router::routes::router(state.clone()))
         .layer(cors)
         .with_state(state);
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], 7070));
+    let addr = SocketAddr::from(([0, 0, 0, 0], 7070));
 
     println!("listening on {addr}");
 
