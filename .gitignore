@@ -1,4 +1,6 @@
 /target
 mimic.db
 .env
+.env.*
+!.env.example
 /.sqlx
